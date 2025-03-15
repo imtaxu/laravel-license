@@ -12,71 +12,14 @@ session_start();
 require_once 'config.php';
 require_once 'functions.php';
 require_once 'auth.php';
-require_once 'license_notifications.php';
+// Lisans bildirimleri özelliği kaldırıldı
 
 // Oturum kontrolü
 $auth = new Auth();
 $loggedIn = $auth->isLoggedIn();
 
-// Lisans bildirimleri
+// Lisans bildirimleri özelliği kaldırıldı
 $licenseNotifications = null;
-if ($loggedIn) {
-    // Veritabanı bazlı bildirimler
-    $db = getDbConnection();
-    $userId = $auth->getUserId();
-    $notificationManager = new LicenseNotifications($db, $userId);
-    $licenseNotifications = $notificationManager->checkExpiringLicenses();
-
-    // Laravel License Checker entegrasyonu
-    // Not: Bu kısım, admin panelin Laravel License paketi ile entegrasyonunu göstermek için eklenmiştir.
-    // Gerçek bir entegrasyon için, Laravel License paketinin API'sini kullanmak daha doğru olacaktır.
-
-    // Örnek bir lisans bildirimi oluştur (gerçek entegrasyon yerine)
-    $laravelLicenseNotification = null;
-
-    // Lisans durumunu kontrol et (örnek)
-    $licenseFile = __DIR__ . '/config.php';
-    if (file_exists($licenseFile)) {
-        // Lisans bilgilerini oku
-        $licenseConfig = [
-            'license_key' => 'DEMO-LICENSE-KEY',
-            'domain' => 'example.com',
-            'expires_at' => date('Y-m-d H:i:s', strtotime('+30 days'))
-        ];
-
-        // Lisans süresinin dolmasına kaç gün kaldığını hesapla
-        $expiryDate = new DateTime($licenseConfig['expires_at']);
-        $now = new DateTime();
-        $daysRemaining = $now->diff($expiryDate)->days;
-
-        // Eğer 30 günden az kaldıysa bildirim oluştur
-        if ($daysRemaining <= 30) {
-            $laravelLicenseNotification = [
-                'license_key' => $licenseConfig['license_key'],
-                'expiry_date' => $licenseConfig['expires_at'],
-                'days_remaining' => $daysRemaining
-            ];
-        }
-
-        if ($laravelLicenseNotification) {
-            // Laravel License bildirimini de ekle
-            if (!is_array($licenseNotifications)) {
-                $licenseNotifications = [];
-            }
-
-            // Bildirim formatını uyumlu hale getir
-            $licenseNotifications[] = [
-                'license_id' => 'laravel_' . md5($laravelLicenseNotification['license_key']),
-                'license_key' => $laravelLicenseNotification['license_key'],
-                'domain' => isset($licenseConfig['domain']) ? $licenseConfig['domain'] : 'Bu uygulama',
-                'expires_at' => $laravelLicenseNotification['expiry_date'],
-                'days_remaining' => $laravelLicenseNotification['days_remaining'],
-                'threshold' => 30,
-                'notification_key' => 'license_expiry_' . $laravelLicenseNotification['license_key']
-            ];
-        }
-    }
-}
 
 // Sayfa yönlendirme
 $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
@@ -183,30 +126,7 @@ switch ($page) {
                         <h1 class="h2"><?php echo $pageTitle; ?></h1>
                     </div>
 
-                    <?php if (!empty($licenseNotifications)): ?>
-                        <!-- Lisans Sona Erme Bildirimi -->
-                        <?php foreach ($licenseNotifications as $notification): ?>
-                            <div class="alert alert-warning alert-dismissible fade show license-expiry-alert" role="alert" id="license-notification-<?php echo $notification['notification_key']; ?>">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <strong><i class="bi bi-exclamation-triangle-fill me-2"></i> Lisans Süresi Dolmak Üzere!</strong>
-                                        <p class="mb-0 mt-2">
-                                            <strong><?php echo $notification['domain']; ?></strong> için lisansınızın süresi <strong><?php echo $notification['days_remaining']; ?> gün</strong> sonra dolacak.
-                                            Lisans anahtarı: <?php echo substr($notification['license_key'], 0, 8); ?>...
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <button type="button" class="btn btn-sm btn-primary me-2 renew-license-btn" data-license-id="<?php echo $notification['license_id']; ?>">
-                                            Lisansı Yenile
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-outline-secondary dismiss-notification" data-notification-key="<?php echo $notification['notification_key']; ?>" data-threshold="<?php echo $notification['threshold']; ?>">
-                                            Tekrar Gösterme
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
+                    <!-- Lisans bildirimleri özelliği kaldırıldı -->
 
                     <?php
                     // Sayfa içeriğini yükle
@@ -231,56 +151,7 @@ switch ($page) {
     <?php if ($loggedIn): ?>
         <script>
             $(document).ready(function() {
-                // Lisans bildirimlerini kapatma işlemi
-                $('.dismiss-notification').on('click', function() {
-                    const notificationKey = $(this).data('notification-key');
-                    const threshold = $(this).data('threshold');
-                    const alertElement = $('#license-notification-' + notificationKey.replace(/\./g, '-'));
-                    const isLaravelLicense = notificationKey.indexOf('license_notification_') === 0;
-
-                    // AJAX ile bildirimi kapat
-                    if (isLaravelLicense) {
-                        // Laravel License bildirimini kapat
-                        $.ajax({
-                            url: 'ajax/dismiss_laravel_notification.php',
-                            type: 'POST',
-                            data: {
-                                notification_key: notificationKey,
-                                threshold: threshold
-                            },
-                            success: function(response) {
-                                // Bildirimi gizle
-                                alertElement.alert('close');
-                            },
-                            error: function(xhr, status, error) {
-                                console.error('Laravel bildirim kapatma hatası:', error);
-                            }
-                        });
-                    } else {
-                        // Normal bildirimi kapat
-                        $.ajax({
-                            url: 'ajax/dismiss_notification.php',
-                            type: 'POST',
-                            data: {
-                                notification_key: notificationKey,
-                                threshold: threshold
-                            },
-                            success: function(response) {
-                                // Bildirimi gizle
-                                alertElement.alert('close');
-                            },
-                            error: function(xhr, status, error) {
-                                console.error('Bildirim kapatma hatası:', error);
-                            }
-                        });
-                    }
-                });
-
-                // Lisans yenileme butonu
-                $('.renew-license-btn').on('click', function() {
-                    const licenseId = $(this).data('license-id');
-                    window.location.href = 'index.php?page=licenses&action=renew&id=' + licenseId;
-                });
+                // Lisans bildirimleri özelliği kaldırıldı
             });
         </script>
     <?php endif; ?>
