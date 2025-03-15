@@ -1,0 +1,146 @@
+/* Lisans Yönetim Paneli CSS */
+
+/* Sidebar Stilleri */
+#sidebar {
+    min-height: 100vh;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#sidebar .nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.25rem;
+    margin: 0.2rem 0;
+}
+
+#sidebar .nav-link:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+#sidebar .nav-link.active {
+    color: #fff;
+    background-color: #0d6efd;
+}
+
+#sidebar .nav-link i {
+    margin-right: 0.5rem;
+}
+
+/* Kart Stilleri */
+.card {
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    padding: 1rem 1.25rem;
+}
+
+.card-body {
+    padding: 1.25rem;
+}
+
+/* Tablo Stilleri */
+.table {
+    vertical-align: middle;
+}
+
+.table th {
+    font-weight: 600;
+    background-color: #f8f9fa;
+}
+
+/* Badge Stilleri */
+.badge {
+    font-weight: 500;
+    padding: 0.5em 0.75em;
+}
+
+/* Form Stilleri */
+.form-label {
+    font-weight: 500;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Buton Stilleri */
+.btn {
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+}
+
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+/* Giriş Sayfası Stilleri */
+.card.shadow-lg {
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+}
+
+/* İstatistik Kartları */
+.border-left-primary {
+    border-left: 0.25rem solid #0d6efd !important;
+}
+
+.border-left-success {
+    border-left: 0.25rem solid #198754 !important;
+}
+
+.border-left-warning {
+    border-left: 0.25rem solid #ffc107 !important;
+}
+
+.border-left-danger {
+    border-left: 0.25rem solid #dc3545 !important;
+}
+
+/* Responsive Düzenlemeler */
+@media (max-width: 767.98px) {
+    #sidebar {
+        min-height: auto;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+}
+
+/* Animasyonlar */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Yükleniyor Animasyonu */
+.loading {
+    display: inline-block;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 0.25rem solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top-color: #0d6efd;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
