@@ -201,24 +201,7 @@ function showFlashMessage() {
     }
 }
 
-/**
- * Veritabanı bağlantısı oluşturur
- * 
- * @return PDO
- */
-function getDbConnection() {
-    try {
-        $db = new PDO(
-            'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8mb4',
-            DB_USER,
-            DB_PASS,
-            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-        );
-        return $db;
-    } catch (PDOException $e) {
-        die('Veritabanı bağlantı hatası: ' . $e->getMessage());
-    }
-}
+// getDbConnection() fonksiyonu config.php dosyasında tanımlandığı için buradan kaldırıldı
 
 /**
  * Zaman farkını insanların anlayabileceği formatta döndürür
