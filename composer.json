@@ -1,33 +1,34 @@
 {
-    "name": "imtaxu/laravel-license",
-    "description": "Laravel 11 ve 12 için lisans kontrol paketi",
-    "type": "library",
-    "license": "MIT",
-    "autoload": {
-        "psr-4": {
-            "ImTaxu\\LaravelLicense\\": "src/"
-        }
-    },
-    "authors": [
-        {
-            "name": "Your Name",
-            "email": "your.email@example.com"
-        }
-    ],
-    "minimum-stability": "dev",
-    "require": {
-        "php": "^8.1",
-        "illuminate/support": "^11.0|^12.0",
-        "guzzlehttp/guzzle": "^7.0"
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "ImTaxu\\LaravelLicense\\LaravelLicenseServiceProvider"
-            ],
-            "aliases": {
-                "License": "ImTaxu\\LaravelLicense\\Facades\\License"
-            }
-        }
-    }
+	"name": "imtaxu/laravel-license",
+	"description": "License control package for Laravel 11 and 12",
+	"type": "library",
+	"license": "MIT",
+	"autoload": {
+		"psr-4": {
+			"ImTaxu\\LaravelLicense\\": "src/"
+		}
+	},
+	"authors": [
+		{
+			"name": "Turgay Aksu",
+			"email": "turgay@aksu.net",
+			"homepage": "https://github.com/imtaxu"
+		}
+	],
+	"minimum-stability": "dev",
+	"require": {
+		"php": "^8.1",
+		"illuminate/support": "^11.0|^12.0",
+		"guzzlehttp/guzzle": "^7.0"
+	},
+	"extra": {
+		"laravel": {
+			"providers": [
+				"ImTaxu\\LaravelLicense\\LaravelLicenseServiceProvider"
+			],
+			"aliases": {
+				"License": "ImTaxu\\LaravelLicense\\Facades\\License"
+			}
+		}
+	}
 }
