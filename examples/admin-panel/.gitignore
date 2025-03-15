@@ -1,0 +1,17 @@
+# Mac OS files
+.DS_Store
+**/.DS_Store
+
+# Temp Files
+*.tmp
+*.bak
+*.swp
+
+# IDE Files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Log Files
+*.log
