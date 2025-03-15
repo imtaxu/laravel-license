@@ -21,7 +21,7 @@ This package provides a license verification system for your Laravel 11 and Lara
 Add the package to your project via Composer:
 
 ```bash
-composer require vendor/laravel-license
+composer require imtaxu/laravel-license
 ```
 
 After installation, run the following command to publish the configuration file:
@@ -158,7 +158,7 @@ Bu paket, Laravel 11 ve Laravel 12 uygulamalarınız için lisans doğrulama sis
 Composer aracılığıyla paketi projenize ekleyin:
 
 ```bash
-composer require vendor/laravel-license
+composer require imtaxu/laravel-license
 ```
 
 Kurulumdan sonra, yapılandırma dosyasını yayınlamak için aşağıdaki komutu çalıştırın:
