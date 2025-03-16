@@ -161,6 +161,19 @@ if (!class_exists('Illuminate\Support\Str')) {
     class_alias('ImTaxu\LaravelLicense\Helpers\StrHelper', 'Illuminate\Support\Str');
 }
 
+// File sınıfı için alias
+if (!class_exists('ImTaxu\LaravelLicense\Helpers\FileHelper')) {
+    class FileHelper {
+        public static function exists($path) { return file_exists($path); }
+        public static function get($path) { return file_get_contents($path); }
+        public static function put($path, $contents) { return file_put_contents($path, $contents); }
+    }
+}
+
+if (!class_exists('Illuminate\Support\Facades\File')) {
+    class_alias('ImTaxu\LaravelLicense\Helpers\FileHelper', 'Illuminate\Support\Facades\File');
+}
+
 class ObfuscateConfigCommand extends Command
 {
     /**

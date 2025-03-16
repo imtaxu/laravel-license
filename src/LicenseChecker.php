@@ -104,8 +104,7 @@ if (!class_exists('Illuminate\Support\Facades\Lang')) {
     class_alias('ImTaxu\LaravelLicense\Helpers\LangHelper', 'Illuminate\Support\Facades\Lang');
 }
 
-
-
+// Http sınıfı için alias
 if (!class_exists('ImTaxu\LaravelLicense\Helpers\HttpHelper')) {
     class HttpHelper
     {
@@ -149,7 +148,10 @@ if (!class_exists('ImTaxu\LaravelLicense\Helpers\HttpHelper')) {
     }
 }
 
-
+// Http sınıfı için class_alias
+if (!class_exists('Illuminate\Support\Facades\Http')) {
+    class_alias('ImTaxu\LaravelLicense\Helpers\HttpHelper', 'Illuminate\Support\Facades\Http');
+}
 
 // IDE helper for service classes
 if (!class_exists('ImTaxu\LaravelLicense\Helpers\ConfigIntegrityServiceHelper')) {

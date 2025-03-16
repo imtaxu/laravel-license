@@ -19,81 +19,86 @@ if (!function_exists('app')) {
 }
 
 // IDE helper for Laravel Facades
-namespace Illuminate\Support\Facades {
-    if (!class_exists('File')) {
-        class File {
-            public static function exists($path) { return file_exists($path); }
-            public static function get($path) { return file_get_contents($path); }
-            public static function put($path, $contents) { return file_put_contents($path, $contents); }
-        }
-    }
-    
-    if (!class_exists('Log')) {
-        class Log {
-            public static function error($message) {}
-            public static function info($message) {}
-            public static function warning($message) {}
-            public static function debug($message) {}
-        }
-    }
-    
-    if (!class_exists('Http')) {
-        class Http {
-            public static function get($url, $query = []) { 
-                return new class {
-                    public $statusCode = 200;
-                    private $data = [];
-                    
-                    public function successful() { return $this->statusCode >= 200 && $this->statusCode < 300; }
-                    
-                    public function json($key = null, $default = null) {
-                        if ($key === null) return $this->data;
-                        return $this->data[$key] ?? $default;
-                    }
-                };
-            }
-            
-            public static function post($url, $data = []) { 
-                return new class {
-                    public $statusCode = 200;
-                    private $data = [];
-                    
-                    public function successful() { return $this->statusCode >= 200 && $this->statusCode < 300; }
-                    
-                    public function json($key = null, $default = null) {
-                        if ($key === null) return $this->data;
-                        return $this->data[$key] ?? $default;
-                    }
-                };
-            }
-        }
+// Namespace süslü parantez ile tanımlanamaz, class_alias kullanıyoruz
+if (!class_exists('ImTaxu\LaravelLicense\Helpers\FileHelper')) {
+    class FileHelper {
+        public static function exists($path) { return file_exists($path); }
+        public static function get($path) { return file_get_contents($path); }
+        public static function put($path, $contents) { return file_put_contents($path, $contents); }
     }
 }
 
-// Global namespace functions
-namespace {
-    if (!function_exists('app')) {
-        function app() {
+if (!class_exists('Illuminate\Support\Facades\File')) {
+    class_alias('ImTaxu\LaravelLicense\Helpers\FileHelper', 'Illuminate\Support\Facades\File');
+}
+    
+// Log sınıfı için helper
+if (!class_exists('ImTaxu\LaravelLicense\Helpers\LogHelper')) {
+    class LogHelper {
+        public static function error($message) {}
+        public static function info($message) {}
+        public static function warning($message) {}
+        public static function debug($message) {}
+    }
+}
+
+if (!class_exists('Illuminate\Support\Facades\Log')) {
+    class_alias('ImTaxu\LaravelLicense\Helpers\LogHelper', 'Illuminate\Support\Facades\Log');
+}
+    
+// Http sınıfı için helper
+if (!class_exists('ImTaxu\LaravelLicense\Helpers\HttpHelper')) {
+    class HttpHelper {
+        public static function get($url, $query = []) { 
             return new class {
-                public function basePath($path = '') { return __DIR__ . '/../../../' . $path; }
-                public function environment(...$args) { return in_array('local', $args); }
-                public function make($class) { return null; }
+                public $statusCode = 200;
+                private $data = [];
+                
+                public function successful() { return $this->statusCode >= 200 && $this->statusCode < 300; }
+                
+                public function json($key = null, $default = null) {
+                    if ($key === null) return $this->data;
+                    return $this->data[$key] ?? $default;
+                }
+            };
+        }
+        
+        public static function post($url, $data = []) { 
+            return new class {
+                public $statusCode = 200;
+                private $data = [];
+                
+                public function successful() { return $this->statusCode >= 200 && $this->statusCode < 300; }
+                
+                public function json($key = null, $default = null) {
+                    if ($key === null) return $this->data;
+                    return $this->data[$key] ?? $default;
+                }
             };
         }
     }
-    
-    if (!function_exists('config_path')) {
-        function config_path($path = '') {
-            return app()->basePath('config') . ($path ? '/' . $path : '');
-        }
+
+// Global namespace functions
+// Süslü parantezli namespace tanımlamasını kaldırıyoruz
+if (!function_exists('app')) {
+    function app() {
+        return new class {
+            public function basePath($path = '') { return __DIR__ . '/../../../' . $path; }
+            public function environment(...$args) { return in_array('local', $args); }
+            public function make($class) { return null; }
+        };
+    }
+}
+
+if (!function_exists('config_path')) {
+    function config_path($path = '') {
+        return app()->basePath('config') . ($path ? '/' . $path : '');
     }
 }
 
 // IDE helper for Exception
-namespace {
-    if (!class_exists('\Exception')) {
-        class Exception extends \Exception {}
-    }
+if (!class_exists('\Exception')) {
+    class Exception extends \Exception {}
 }
 
 if (!function_exists('config')) {
@@ -117,13 +122,6 @@ if (!class_exists('Illuminate\Support\Facades\Log')) {
 if (!class_exists('Illuminate\Support\Facades\Http')) {
     class_alias('ImTaxu\LaravelLicense\Helpers\HttpHelper', 'Illuminate\Support\Facades\Http');
 }
-
-namespace ImTaxu\LaravelLicense\Services;
-
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Http;
-use Exception;
 
 class ConfigIntegrityService
 {

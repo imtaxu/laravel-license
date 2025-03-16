@@ -2,9 +2,33 @@
 
 namespace ImTaxu\LaravelLicense\Services;
 
-use Illuminate\Support\Facades\Cache;
 use DateTime;
 use Exception;
+
+// IDE helper for Laravel Cache class
+if (!class_exists('ImTaxu\LaravelLicense\Helpers\CacheHelper')) {
+    class CacheHelper {
+        public static function put($key, $value, $seconds = null) { return true; }
+        public static function has($key) { return false; }
+        public static function get($key, $default = null) { return $default; }
+        public static function forget($key) { return true; }
+        public static function remember($key, $ttl, $callback) { return $callback(); }
+        public static function rememberForever($key, $callback) { return $callback(); }
+        public static function pull($key, $default = null) { return $default; }
+        public static function add($key, $value, $ttl = null) { return true; }
+        public static function increment($key, $value = 1) { return 1; }
+        public static function decrement($key, $value = 1) { return 0; }
+        public static function forever($key, $value) { return true; }
+        public static function tags($names) { return new self(); }
+        public static function flush() { return true; }
+    }
+}
+
+if (!class_exists('Illuminate\Support\Facades\Cache')) {
+    class_alias('ImTaxu\LaravelLicense\Helpers\CacheHelper', 'Illuminate\Support\Facades\Cache');
+}
+
+use Illuminate\Support\Facades\Cache;
 
 /**
  * Cache Service

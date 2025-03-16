@@ -47,7 +47,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'status' && isset($_GET['id']) 
 // Lisans güncelleme işlemi
 if (isset($_GET['action']) && $_GET['action'] == 'update' && isset($_POST['license_id'])) {
     $licenseId = (int)$_POST['license_id'];
-
+    
     // Form verilerini al
     $domain = trim($_POST['domain']);
     $ownerEmail = trim($_POST['owner_email']);
@@ -56,7 +56,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'update' && isset($_POST['licen
     $maxInstances = (int)$_POST['max_instances'];
     $features = trim($_POST['features']);
     $excludedIps = trim($_POST['excluded_ips']);
-
+    
     // Geçerli durumları kontrol et
     if (in_array($status, ['active', 'inactive', 'suspended'])) {
         try {
@@ -70,7 +70,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'update' && isset($_POST['licen
                 excluded_ips = :excluded_ips, 
                 updated_at = NOW() 
                 WHERE id = :id");
-
+                
             $stmt->execute([
                 'domain' => $domain,
                 'owner_email' => $ownerEmail,
@@ -290,7 +290,7 @@ try {
                                             </div>
                                         </div>
                                     </div>
-
+                                    
                                     <!-- Düzenleme Modal -->
                                     <div class="modal fade" id="editLicenseModal<?php echo $license['id']; ?>" tabindex="-1" aria-labelledby="editLicenseModalLabel<?php echo $license['id']; ?>" aria-hidden="true">
                                         <div class="modal-dialog modal-lg">

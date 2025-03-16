@@ -108,10 +108,7 @@ if (!class_exists('Illuminate\Support\Facades\Route')) {
     class_alias('ImTaxu\LaravelLicense\Helpers\RouteHelper', 'Illuminate\Support\Facades\Route');
 }
 
-// Route sınıfı için alias tekrarı
-if (!class_exists('Illuminate\Support\Facades\Route')) {
-    class_alias('ImTaxu\LaravelLicense\Helpers\RouteHelper', 'Illuminate\Support\Facades\Route');
-}
+// Route sınıfı için alias zaten tanımlandı
 
 use Illuminate\Support\Facades\Route;
 use ImTaxu\LaravelLicense\Http\Controllers\LicenseController;
