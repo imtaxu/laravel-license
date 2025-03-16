@@ -8,6 +8,24 @@ use ImTaxu\LaravelLicense\Http\Middleware\LicenseCheckMiddleware;
 use ImTaxu\LaravelLicense\Services\ConfigIntegrityService;
 
 // IDE helper for Laravel ServiceProvider
+if (!class_exists('ImTaxu\LaravelLicense\Helpers\ServiceProviderHelper')) {
+    class ServiceProviderHelper extends \ImTaxu\LaravelLicense\Helpers\BaseServiceProvider {
+        public function mergeConfigFrom($path, $key) { return null; }
+        public function publishes($paths, $groups = null) { return null; }
+        public function loadViewsFrom($path, $namespace) { return null; }
+        public function loadTranslationsFrom($path, $namespace) { return null; }
+        public function loadRoutesFrom($path) { return null; }
+        public function loadMigrationsFrom($paths) { return null; }
+        public function loadJsonTranslationsFrom($path) { return null; }
+        public function register() { }
+        public function boot() { }
+        public function booting($callback) { return $this; }
+        public function booted($callback) { return $this; }
+        public function registerPolicies() {}
+        public function provides() { return []; }
+    }
+}
+
 if (!class_exists('Illuminate\Support\ServiceProvider')) {
     class_alias('ImTaxu\LaravelLicense\Helpers\ServiceProviderHelper', 'Illuminate\Support\ServiceProvider');
 }
