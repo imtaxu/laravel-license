@@ -18,6 +18,7 @@ if (!class_exists('ImTaxu\LaravelLicense\Helpers\CommandHelper')) {
         public function question($message) { echo "QUESTION: $message\n"; }
         public function comment($message) { echo "COMMENT: $message\n"; }
         public function success($message) { echo "SUCCESS: $message\n"; }
+
         public function handle() { return 0; }
         
         // Statik yardımcı metotlar
@@ -32,14 +33,19 @@ if (!class_exists('ImTaxu\LaravelLicense\Helpers\CommandHelper')) {
 
 // IDE helper for Illuminate\Support\Str
 if (!class_exists('ImTaxu\LaravelLicense\Helpers\StrHelper')) {
-    class StrHelper {
-        public static function random($length = 16) { return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)))), 1, $length); }
-        public static function uuid() { return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x', mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0x0fff) | 0x4000, mt_rand(0, 0x3fff) | 0x8000, mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)); }
-        public static function slug($title, $separator = '-') { return strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', $separator, $title))); }
-        public static function contains($haystack, $needles) { return strpos($haystack, $needles) !== false; }
-        public static function startsWith($haystack, $needles) { return strpos($haystack, $needles) === 0; }
-        public static function endsWith($haystack, $needles) { return substr($haystack, -strlen($needles)) === $needles; }
-    }
+    class_alias('ImTaxu\LaravelLicense\Console\Commands\StrHelperImpl', 'ImTaxu\LaravelLicense\Helpers\StrHelper');
+}
+
+/**
+ * Str Helper class implementation
+ */
+class StrHelperImpl {
+    public static function random($length = 16) { return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)))), 1, $length); }
+    public static function uuid() { return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x', mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0x0fff) | 0x4000, mt_rand(0, 0x3fff) | 0x8000, mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)); }
+    public static function slug($title, $separator = '-') { return strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', $separator, $title))); }
+    public static function contains($haystack, $needles) { return strpos($haystack, $needles) !== false; }
+    public static function startsWith($haystack, $needles) { return strpos($haystack, $needles) === 0; }
+    public static function endsWith($haystack, $needles) { return substr($haystack, -strlen($needles)) === $needles; }
 }
 
 if (!class_exists('Illuminate\Support\Str')) {
@@ -48,58 +54,33 @@ if (!class_exists('Illuminate\Support\Str')) {
 
 // IDE helpers for functions and classes
 if (!class_exists('ImTaxu\LaravelLicense\Helpers\FileHelper')) {
-    class FileHelper {
-        public static function exists($path) { return file_exists($path); }
-        public static function get($path) { return file_get_contents($path); }
-        public static function put($path, $contents) { return file_put_contents($path, $contents); }
-    }
+    class_alias('ImTaxu\LaravelLicense\Console\Commands\FileHelperImpl', 'ImTaxu\LaravelLicense\Helpers\FileHelper');
+}
+
+/**
+ * File Helper class implementation
+ */
+class FileHelperImpl {
+    public static function exists($path) { return file_exists($path); }
+    public static function get($path) { return file_get_contents($path); }
+    public static function put($path, $contents) { return file_put_contents($path, $contents); }
 }
 
 if (!class_exists('ImTaxu\LaravelLicense\Helpers\StorageHelper')) {
-    class StorageHelper {
-        public static function disk($name) { return new self(); }
-        public function put($path, $contents) { return file_put_contents(storage_path($path), $contents); }
-    }
+    class_alias('ImTaxu\LaravelLicense\Console\Commands\StorageHelperImpl', 'ImTaxu\LaravelLicense\Helpers\StorageHelper');
 }
 
-if (!class_exists('ImTaxu\LaravelLicense\Helpers\StrHelper')) {
-    class StrHelper {
-        public static function random($length = 16) { return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)))), 1, $length); }
-        public static function slug($title, $separator = '-') { return strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', $separator, $title))); }
-        public static function limit($value, $limit = 100, $end = '...') { return substr($value, 0, $limit) . $end; }
-        public static function contains($haystack, $needles) { return str_contains($haystack, $needles); }
-        public static function startsWith($haystack, $needles) { return str_starts_with($haystack, $needles); }
-        public static function endsWith($haystack, $needles) { return str_ends_with($haystack, $needles); }
-        public static function camel($value) { return lcfirst(static::studly($value)); }
-        public static function studly($value) { return str_replace(' ', '', ucwords(str_replace(['-', '_'], ' ', $value))); }
-        public static function snake($value, $delimiter = '_') { return strtolower(preg_replace('/[A-Z]/', $delimiter . '$0', lcfirst($value))); }
-    }
+/**
+ * Storage Helper class implementation
+ */
+class StorageHelperImpl {
+    public static function disk($name) { return new self(); }
+    public function put($path, $contents) { return file_put_contents(storage_path($path), $contents); }
 }
 
-if (!class_exists('ImTaxu\LaravelLicense\Helpers\CommandHelper')) {
-    class CommandHelper {
-        protected $signature;
-        protected $description;
-        protected $hidden = false;
-        
-        public function error($message) { echo "ERROR: {$message}\n"; }
-        public function info($message) { echo "INFO: {$message}\n"; }
-        public function line($message) { echo "{$message}\n"; }
-        public function comment($message) { echo "COMMENT: {$message}\n"; }
-        public function question($message) { echo "QUESTION: {$message}\n"; }
-        public function warn($message) { echo "WARNING: {$message}\n"; }
-        public function alert($message) { echo "ALERT: {$message}\n"; }
-        public function table(array $headers, array $rows) { /* Table output */ }
-        public function progressBar($count) { return new class { public function advance() {} public function finish() {} }; }
-        public function confirm($question, $default = false) { return true; }
-        public function choice($question, array $choices, $default = null) { return $default; }
-        public function handle() { return 0; }
-        public function argument($key = null) { return null; }
-        public function option($key = null) { return null; }
-        public function call($command, array $arguments = []) { return 0; }
-        public function callSilent($command, array $arguments = []) { return 0; }
-    }
-}
+// This class is already defined above, so we don't need to redefine it
+
+// This class is already defined above as CommandHelperImpl, so we don't need to redefine it
 
 // IDE helpers for functions provided by Laravel
 if (!function_exists('app')) {
@@ -129,7 +110,7 @@ if (!function_exists('env')) {
     }
 }
 
-// IDE helpers for Laravel classes
+// IDE helpers for Laravel classes - using class_alias without namespace declarations
 
 if (!class_exists('Illuminate\Console\Command')) {
     class_alias('ImTaxu\LaravelLicense\Helpers\CommandHelper', 'Illuminate\Console\Command');
@@ -149,30 +130,7 @@ if (!class_exists('Illuminate\Support\Str')) {
 
 
 
-// Use statements moved to the top
-
-// Command sınıfı için alias
-if (!class_exists('Illuminate\Console\Command')) {
-    class_alias('ImTaxu\LaravelLicense\Helpers\CommandHelper', 'Illuminate\Console\Command');
-}
-
-// Str sınıfı için alias
-if (!class_exists('Illuminate\Support\Str')) {
-    class_alias('ImTaxu\LaravelLicense\Helpers\StrHelper', 'Illuminate\Support\Str');
-}
-
-// File sınıfı için alias
-if (!class_exists('ImTaxu\LaravelLicense\Helpers\FileHelper')) {
-    class FileHelper {
-        public static function exists($path) { return file_exists($path); }
-        public static function get($path) { return file_get_contents($path); }
-        public static function put($path, $contents) { return file_put_contents($path, $contents); }
-    }
-}
-
-if (!class_exists('Illuminate\Support\Facades\File')) {
-    class_alias('ImTaxu\LaravelLicense\Helpers\FileHelper', 'Illuminate\Support\Facades\File');
-}
+// These aliases are already defined above, so we don't need to redefine them
 
 class ObfuscateConfigCommand extends Command
 {
