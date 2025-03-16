@@ -4,13 +4,19 @@
  */
 
 /**
- * Get the current language from session or set to default
+ * Get the current language from session, cookie or set to default
  * 
  * @return string Language code (en, tr, etc.)
  */
 function getCurrentLanguage() {
+    // Önce session'dan kontrol et
     if (isset($_SESSION['language'])) {
         return $_SESSION['language'];
+    }
+    
+    // Session'da yoksa cookie'den kontrol et
+    if (isset($_COOKIE['admin_language'])) {
+        return $_COOKIE['admin_language'];
     }
     
     // Default language is English
@@ -18,7 +24,7 @@ function getCurrentLanguage() {
 }
 
 /**
- * Set the current language in session
+ * Set the current language in session and cookie
  * 
  * @param string $language Language code (en, tr, etc.)
  * @return bool Success status
@@ -30,7 +36,12 @@ function setLanguage($language) {
         return false;
     }
     
+    // Session'a kaydet
     $_SESSION['language'] = $language;
+    
+    // Cookie'ye de kaydet (30 gün geçerli)
+    setcookie('admin_language', $language, time() + (30 * 24 * 60 * 60), '/');
+    
     return true;
 }
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Lisans Yönetim Paneli - Geçersiz İstekler Sayfası
+ * License Management Panel - Invalid Requests Page
  */
 
 // Veritabanı bağlantısı
@@ -14,9 +14,9 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
         $stmt = $db->prepare("DELETE FROM invalid_requests WHERE id = :id");
         $stmt->execute(['id' => $requestId]);
         
-        showMessageAndRedirect('Geçersiz istek kaydı başarıyla silindi.', 'success', 'index.php?page=invalid-requests');
+        showMessageAndRedirect(__('invalid_request_deleted'), 'success', 'index.php?page=invalid-requests');
     } catch (PDOException $e) {
-        showError('Geçersiz istek silinirken bir hata oluştu: ' . $e->getMessage());
+        showError(__('invalid_request_delete_error') . ': ' . $e->getMessage());
     }
 }
 
@@ -26,9 +26,9 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete-all') {
         $stmt = $db->prepare("DELETE FROM invalid_requests");
         $stmt->execute();
         
-        showMessageAndRedirect('Tüm geçersiz istek kayıtları başarıyla silindi.', 'success', 'index.php?page=invalid-requests');
+        showMessageAndRedirect(__('all_invalid_requests_deleted'), 'success', 'index.php?page=invalid-requests');
     } catch (PDOException $e) {
-        showError('Geçersiz istekler silinirken bir hata oluştu: ' . $e->getMessage());
+        showError(__('invalid_requests_delete_error') . ': ' . $e->getMessage());
     }
 }
 
@@ -74,8 +74,8 @@ try {
     $requests = $stmtRequests->fetchAll();
     
 } catch (PDOException $e) {
-    error_log("Geçersiz istek listesi hatası: " . $e->getMessage());
-    $error = "Geçersiz istekler alınırken bir hata oluştu.";
+    error_log(__('invalid_requests_list_error') . ": " . $e->getMessage());
+    $error = __('invalid_requests_fetch_error');
 }
 ?>
 
@@ -85,7 +85,7 @@ try {
 <!-- Arama ve filtreler -->
 <div class="card shadow mb-4">
     <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Geçersiz İstek Arama</h6>
+        <h6 class="m-0 font-weight-bold text-primary"><?php echo __('search_invalid_request'); ?></h6>
     </div>
     <div class="card-body">
         <form method="get" action="index.php">
@@ -93,15 +93,15 @@ try {
             <div class="row">
                 <div class="col-md-8">
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control" placeholder="Lisans anahtarı, IP adresi, domain veya neden ara..." name="search" value="<?php echo htmlspecialchars($search); ?>">
+                        <input type="text" class="form-control" placeholder="<?php echo __('search_invalid_request_placeholder'); ?>" name="search" value="<?php echo htmlspecialchars($search); ?>">
                         <button class="btn btn-primary" type="submit">
-                            <i class="bi bi-search"></i> Ara
+                            <i class="bi bi-search"></i> <?php echo __('search'); ?>
                         </button>
                     </div>
                 </div>
                 <div class="col-md-4 text-end">
-                    <a href="index.php?page=invalid-requests&action=delete-all" class="btn btn-danger" onclick="return confirm('Tüm geçersiz istek kayıtlarını silmek istediğinize emin misiniz?');">
-                        <i class="bi bi-trash"></i> Tümünü Temizle
+                    <a href="index.php?page=invalid-requests&action=delete-all" class="btn btn-danger" onclick="return confirm('<?php echo __('confirm_delete_all_invalid_requests'); ?>')">
+                        <i class="bi bi-trash"></i> <?php echo __('clear_all'); ?>
                     </a>
                 </div>
             </div>
@@ -112,7 +112,7 @@ try {
 <!-- Geçersiz İstek Listesi -->
 <div class="card shadow mb-4">
     <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Geçersiz İstekler</h6>
+        <h6 class="m-0 font-weight-bold text-primary"><?php echo __('invalid_requests'); ?></h6>
     </div>
     <div class="card-body">
         <?php if (isset($error)): ?>
@@ -123,12 +123,12 @@ try {
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Lisans Anahtarı</th>
-                            <th>IP Adresi</th>
-                            <th>Domain</th>
-                            <th>Neden</th>
-                            <th>Tarih</th>
-                            <th>İşlemler</th>
+                            <th><?php echo __('license_key'); ?></th>
+                            <th><?php echo __('ip_address'); ?></th>
+                            <th><?php echo __('domain'); ?></th>
+                            <th><?php echo __('reason'); ?></th>
+                            <th><?php echo __('request_date'); ?></th>
+                            <th><?php echo __('actions'); ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -143,12 +143,12 @@ try {
                                 <td>
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                            İşlemler
+                                            <?php echo __('actions'); ?>
                                         </button>
                                         <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#viewRequestModal<?php echo $request['id']; ?>">Detaylar</a></li>
+                                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#viewRequestModal<?php echo $request['id']; ?>"><?php echo __('details'); ?></a></li>
                                             <li><hr class="dropdown-divider"></li>
-                                            <li><a class="dropdown-item text-danger" href="index.php?page=invalid-requests&action=delete&id=<?php echo $request['id']; ?>" onclick="return confirm('Bu kaydı silmek istediğinize emin misiniz?');">Sil</a></li>
+                                            <li><a class="dropdown-item text-danger" href="index.php?page=invalid-requests&action=delete&id=<?php echo $request['id']; ?>" onclick="return confirm('<?php echo __('confirm_delete'); ?>')"><?php echo __('delete'); ?></a></li>
                                         </ul>
                                     </div>
                                     
@@ -157,20 +157,20 @@ try {
                                         <div class="modal-dialog modal-lg">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="viewRequestModalLabel<?php echo $request['id']; ?>">Geçersiz İstek Detayı</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                                                    <h5 class="modal-title" id="viewRequestModalLabel<?php echo $request['id']; ?>"><?php echo __('invalid_request_details'); ?></h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<?php echo __('close'); ?>"></button>
                                                 </div>
                                                 <div class="modal-body">
                                                     <div class="row">
                                                         <div class="col-md-6">
-                                                            <p><strong>Lisans Anahtarı:</strong> <?php echo $request['license_key']; ?></p>
-                                                            <p><strong>IP Adresi:</strong> <?php echo $request['ip_address']; ?></p>
-                                                            <p><strong>Domain:</strong> <?php echo $request['domain']; ?></p>
+                                                            <p><strong><?php echo __('license_key'); ?>:</strong> <?php echo $request['license_key']; ?></p>
+                                                            <p><strong><?php echo __('ip_address'); ?>:</strong> <?php echo $request['ip_address']; ?></p>
+                                                            <p><strong><?php echo __('domain'); ?>:</strong> <?php echo $request['domain']; ?></p>
                                                         </div>
                                                         <div class="col-md-6">
-                                                            <p><strong>Tarih:</strong> <?php echo formatDate($request['created_at']); ?></p>
-                                                            <p><strong>Neden:</strong> <?php echo $request['reason']; ?></p>
-                                                            <p><strong>User Agent:</strong> <?php echo $request['user_agent'] ?: 'Belirtilmemiş'; ?></p>
+                                                            <p><strong><?php echo __('request_date'); ?>:</strong> <?php echo formatDate($request['created_at']); ?></p>
+                                                            <p><strong><?php echo __('reason'); ?>:</strong> <?php echo $request['reason']; ?></p>
+                                                            <p><strong><?php echo __('user_agent'); ?>:</strong> <?php echo $request['user_agent'] ?: __('not_specified'); ?></p>
                                                         </div>
                                                     </div>
                                                     
@@ -178,14 +178,14 @@ try {
                                                     
                                                     <div class="row">
                                                         <div class="col-md-12">
-                                                            <p><strong>İstek Verileri:</strong></p>
-                                                            <pre class="bg-light p-3"><?php echo $request['request_data'] ?: 'Veri yok'; ?></pre>
+                                                            <p><strong><?php echo __('request_data'); ?>:</strong></p>
+                                                            <pre class="bg-light p-3"><?php echo $request['request_data'] ?: __('no_data'); ?></pre>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
-                                                    <a href="index.php?page=invalid-requests&action=delete&id=<?php echo $request['id']; ?>" class="btn btn-danger" onclick="return confirm('Bu kaydı silmek istediğinize emin misiniz?');">Sil</a>
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?php echo __('close'); ?></button>
+                                                    <a href="index.php?page=invalid-requests&action=delete&id=<?php echo $request['id']; ?>" class="btn btn-danger" onclick="return confirm('<?php echo __('confirm_delete'); ?>')"><?php echo __('delete'); ?></a>
                                                 </div>
                                             </div>
                                         </div>
@@ -199,10 +199,10 @@ try {
             
             <!-- Sayfalama -->
             <?php if ($totalPages > 1): ?>
-                <nav aria-label="Sayfalama">
+                <nav aria-label="<?php echo __('pagination'); ?>">
                     <ul class="pagination justify-content-center">
                         <li class="page-item <?php echo ($page <= 1) ? 'disabled' : ''; ?>">
-                            <a class="page-link" href="<?php echo ($page <= 1) ? '#' : 'index.php?page=invalid-requests&p=' . ($page - 1) . (!empty($search) ? '&search=' . urlencode($search) : ''); ?>" aria-label="Önceki">
+                            <a class="page-link" href="<?php echo ($page <= 1) ? '#' : 'index.php?page=invalid-requests&p=' . ($page - 1) . (!empty($search) ? '&search=' . urlencode($search) : ''); ?>" aria-label="<?php echo __('previous'); ?>">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
@@ -216,7 +216,7 @@ try {
                         <?php endfor; ?>
                         
                         <li class="page-item <?php echo ($page >= $totalPages) ? 'disabled' : ''; ?>">
-                            <a class="page-link" href="<?php echo ($page >= $totalPages) ? '#' : 'index.php?page=invalid-requests&p=' . ($page + 1) . (!empty($search) ? '&search=' . urlencode($search) : ''); ?>" aria-label="Sonraki">
+                            <a class="page-link" href="<?php echo ($page >= $totalPages) ? '#' : 'index.php?page=invalid-requests&p=' . ($page + 1) . (!empty($search) ? '&search=' . urlencode($search) : ''); ?>" aria-label="<?php echo __('next'); ?>">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>
                         </li>
@@ -226,9 +226,9 @@ try {
             
         <?php else: ?>
             <div class="text-center py-5">
-                <p class="text-muted mb-3">Henüz geçersiz istek kaydı bulunmuyor veya arama kriterlerinize uygun kayıt bulunamadı.</p>
+                <p class="text-muted mb-3"><?php echo __('no_invalid_requests_found'); ?></p>
                 <i class="bi bi-shield-check text-success" style="font-size: 3rem;"></i>
-                <p class="mt-3">Tüm lisanslar sorunsuz çalışıyor gibi görünüyor!</p>
+                <p class="mt-3"><?php echo __('all_licenses_working'); ?></p>
             </div>
         <?php endif; ?>
     </div>

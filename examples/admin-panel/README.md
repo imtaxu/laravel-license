@@ -4,15 +4,15 @@ This panel is a simple web interface for license management for the Laravel Lice
 
 ## Features
 
-- Secure login system
-- Modern and user-friendly interface
-- License creation and management
-- License status tracking
-- View invalid license requests
-- License renewal and domain change capabilities
-- Rate limiting protection against brute force attacks
-- Detailed analytics and reporting
-- Multi-user support with role-based access control
+-   Secure login system
+-   Modern and user-friendly interface
+-   License creation and management
+-   License status tracking
+-   View invalid license requests
+-   License renewal and domain change capabilities
+-   Rate limiting protection against brute force attacks
+-   Detailed analytics and reporting
+-   Multi-user support with role-based access control
 
 ## Installation
 
@@ -36,21 +36,22 @@ CREATE TABLE `users` (
 -- Licenses table
 CREATE TABLE `licenses` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `license_key` varchar(255) NOT NULL,
-  `status` enum('active','inactive','suspended') NOT NULL DEFAULT 'active',
-  `domain` varchar(255) NOT NULL,
-  `client_ip` varchar(45) DEFAULT NULL,
-  `owner_email` varchar(255) NOT NULL,
-  `expires_at` datetime NOT NULL,
+  `license_key` varchar(100) NOT NULL,
+  `domain` varchar(255) NULL,
+  `owner_email` varchar(255) NULL,
+  `status` enum('active','inactive','suspended','expired') NOT NULL DEFAULT 'active',
+  `expires_at` date NULL,
+  `max_instances` int(11) NOT NULL DEFAULT 1,
+  `features` text NULL,
+  `excluded_ips` text NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
-  `max_instances` int(11) NOT NULL DEFAULT 1,
-  `client_signature` varchar(255) DEFAULT NULL,
-  `excluded_ips` text DEFAULT NULL,
-  `features` text DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `license_key` (`license_key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  UNIQUE KEY `license_key` (`license_key`),
+  INDEX (`domain`),
+  INDEX (`owner_email`),
+  INDEX (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Invalid requests table
 CREATE TABLE `invalid_requests` (
@@ -94,9 +95,10 @@ CREATE TABLE `rate_limits` (
 2. Create an admin user:
 
 ```sql
-INSERT INTO `users` (`username`, `password`, `name`, `email`, `created_at`, `updated_at`) 
-VALUES ('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Admin User', 'admin@example.com', NOW(), NOW());
+INSERT INTO `users` (`username`, `password`, `name`, `email`, `created_at`, `updated_at`)
+VALUES ('admin@example.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Admin User', 'admin@example.com', NOW(), NOW());
 ```
+
 Note: The password above is set to "password". It is recommended to use a more secure password in a production environment.
 
 3. Update the database connection information in the `config.php` file.
@@ -105,14 +107,14 @@ Note: The password above is set to "password". It is recommended to use a more s
 
 ## Security Measures
 
-- All passwords are hashed with bcrypt
-- Failed login attempts are logged
-- Session timeout control
-- Login actions are recorded with IP address and user agent
-- Rate limiting protection against brute force attacks
-- Temporary IP blocking after a certain number of failed attempts
-- CSRF protection for all forms
-- Input validation and sanitization
+-   All passwords are hashed with bcrypt
+-   Failed login attempts are logged
+-   Session timeout control
+-   Login actions are recorded with IP address and user agent
+-   Rate limiting protection against brute force attacks
+-   Temporary IP blocking after a certain number of failed attempts
+-   CSRF protection for all forms
+-   Input validation and sanitization
 
 ## API Integration
 
@@ -130,15 +132,15 @@ Bu panel, Laravel License paketi için lisans yönetimini sağlayan basit bir we
 
 ## Özellikler
 
-- Güvenli giriş sistemi
-- Modern ve kullanıcı dostu arayüz
-- Lisans oluşturma ve yönetme
-- Lisans durumlarını takip etme
-- Geçersiz lisans isteklerini görüntüleme
-- Lisans yenileme ve domain değişikliği yapabilme
-- Rate Limiting (hız sınırlama) ile brute force saldırılarına karşı koruma
-- Detaylı analitik ve raporlama
-- Rol tabanlı erişim kontrolü ile çok kullanıcılı destek
+-   Güvenli giriş sistemi
+-   Modern ve kullanıcı dostu arayüz
+-   Lisans oluşturma ve yönetme
+-   Lisans durumlarını takip etme
+-   Geçersiz lisans isteklerini görüntüleme
+-   Lisans yenileme ve domain değişikliği yapabilme
+-   Rate Limiting (hız sınırlama) ile brute force saldırılarına karşı koruma
+-   Detaylı analitik ve raporlama
+-   Rol tabanlı erişim kontrolü ile çok kullanıcılı destek
 
 ## Kurulum
 
@@ -162,21 +164,22 @@ CREATE TABLE `users` (
 -- Lisanslar tablosu
 CREATE TABLE `licenses` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `license_key` varchar(255) NOT NULL,
-  `status` enum('active','inactive','suspended') NOT NULL DEFAULT 'active',
-  `domain` varchar(255) NOT NULL,
-  `client_ip` varchar(45) DEFAULT NULL,
-  `owner_email` varchar(255) NOT NULL,
-  `expires_at` datetime NOT NULL,
+  `license_key` varchar(100) NOT NULL,
+  `domain` varchar(255) NULL,
+  `owner_email` varchar(255) NULL,
+  `status` enum('active','inactive','suspended','expired') NOT NULL DEFAULT 'active',
+  `expires_at` date NULL,
+  `max_instances` int(11) NOT NULL DEFAULT 1,
+  `features` text NULL,
+  `excluded_ips` text NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
-  `max_instances` int(11) NOT NULL DEFAULT 1,
-  `client_signature` varchar(255) DEFAULT NULL,
-  `excluded_ips` text DEFAULT NULL,
-  `features` text DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `license_key` (`license_key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  UNIQUE KEY `license_key` (`license_key`),
+  INDEX (`domain`),
+  INDEX (`owner_email`),
+  INDEX (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Geçersiz istekler tablosu
 CREATE TABLE `invalid_requests` (
@@ -220,9 +223,10 @@ CREATE TABLE `rate_limits` (
 2. Admin kullanıcısı oluşturun:
 
 ```sql
-INSERT INTO `users` (`username`, `password`, `name`, `email`, `created_at`, `updated_at`) 
-VALUES ('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Admin Kullanıcı', 'admin@example.com', NOW(), NOW());
+INSERT INTO `users` (`username`, `password`, `name`, `email`, `created_at`, `updated_at`)
+VALUES ('admin@example.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Admin Kullanıcı', 'admin@example.com', NOW(), NOW());
 ```
+
 Not: Yukarıdaki şifre "password" olarak ayarlanmıştır. Gerçek ortamda daha güvenli bir şifre kullanmanız önerilir.
 
 3. `config.php` dosyasında veritabanı bağlantı bilgilerini güncelleyin.
@@ -231,14 +235,66 @@ Not: Yukarıdaki şifre "password" olarak ayarlanmıştır. Gerçek ortamda daha
 
 ## Güvenlik Önlemleri
 
-- Tüm şifreler bcrypt ile hashlenir
-- Başarısız giriş denemeleri loglanır
-- Oturum zaman aşımı kontrolü yapılır
-- Giriş işlemleri IP adresi ve user agent ile kaydedilir
-- Rate Limiting ile brute force saldırılarına karşı koruma sağlanır
-- Belirli sayıda başarısız deneme sonrası IP adresi geçici olarak engellenir
-- Tüm formlar için CSRF koruması
-- Girdi doğrulama ve temizleme
+-   Tüm şifreler bcrypt ile hashlenir
+-   Başarısız giriş denemeleri loglanır
+-   Oturum zaman aşımı kontrolü yapılır
+-   Giriş işlemleri IP adresi ve user agent ile kaydedilir
+-   Rate Limiting ile brute force saldırılarına karşı koruma sağlanır
+-   Belirli sayıda başarısız deneme sonrası IP adresi geçici olarak engellenir
+-   Tüm formlar için CSRF koruması
+-   Girdi doğrulama ve temizleme
+
+## Özellikler (Features) Alanı
+
+Lisans sisteminde `features` alanı, **tamamen opsiyonel** bir özelliktir ve JSON formatında veri saklayarak lisansların özelliklerini dinamik olarak yönetmenize olanak tanır. Bu alan, uygulamalarınızın lisans bazlı özellik yönetimini kolaylaştırır.
+
+### Kullanım Alanları
+
+-   **Farklı lisans paketleri oluşturma**: Temel, premium, kurumsal gibi farklı seviyeler tanımlayabilirsiniz
+-   **Modül erişimi kontrolü**: Hangi lisansın hangi modüllere erişebileceğini belirleyebilirsiniz
+-   **Kullanım sınırları belirleme**: Kullanıcı sayısı, depolama alanı, işlem limitleri gibi sınırlar tanımlayabilirsiniz
+-   **Özel müşteri yapılandırmaları**: Her müşteriye özel ayarlar tanımlayabilirsiniz
+
+### Örnek JSON Formatı
+
+```json
+{
+  "premium_access": true,
+  "max_users": 50,
+  "modules": ["reporting", "analytics", "export"],
+  "storage_limit": "10GB",
+  "api_rate_limit": 1000,
+  "custom_settings": {
+    "theme": "dark",
+    "notification_channels": ["email", "sms"],
+    "data_retention_days": 90
+  }
+}
+```
+
+### Özellik Tanımları ve Kullanım Örnekleri
+
+| Özellik | Açıklama | Kullanım Örneği |
+|----------|------------|---------------|
+| `premium_access` | Premium özelliklere erişim izni | `if ($license->hasFeature('premium_access')) { // Premium özellikleri göster }` |
+| `max_users` | Sisteme eklenebilecek maksimum kullanıcı sayısı | `if (count($users) < $license->hasFeature('max_users', 10)) { // Yeni kullanıcı ekle }` |
+| `modules` | Erişim izni olan modüllerin listesi | `if ($license->hasModuleAccess('reporting')) { // Raporlama modülünü göster }` |
+| `storage_limit` | Depolama alanı limiti | `if ($fileSize + $currentUsage < parseSize($license->hasFeature('storage_limit', '1GB'))) { // Dosyayı yükle }` |
+| `api_rate_limit` | API istek limiti | `if ($requestCount < $license->hasFeature('api_rate_limit', 100)) { // API isteğini işle }` |
+
+### Uygulama Entegrasyonu
+
+Features alanı, uygulamalarınızda şu şekilde kullanılabilir:
+
+1. **Kullanıcı Sayısı Kontrolü**: `max_users` değeri, sisteme kaydedilebilecek maksimum kullanıcı sayısını belirler. Yeni kullanıcı ekleme işlemlerinde bu değer kontrol edilmelidir.
+
+2. **Modül Erişimi**: `modules` dizisi, lisansın hangi modüllere erişebileceğini belirler. Menü öğelerini gösterirken veya sayfa erişimlerini kontrol ederken kullanılabilir.
+
+3. **Depolama Alanı**: `storage_limit` değeri, kullanıcının toplam depolama alanını belirler. Dosya yükleme işlemlerinde bu limit kontrol edilmelidir.
+
+4. **API Limitleri**: `api_rate_limit` değeri, belirli bir süre içinde yapılabilecek API isteği sayısını belirler.
+
+Bu yapı, veritabanı şemanızı değiştirmeden yeni özellikler eklemenize olanak tanır ve lisans sisteminin gelecekteki ihtiyaçlara göre kolayca genişletilebilmesini sağlar.
 
 ## API Entegrasyonu
 

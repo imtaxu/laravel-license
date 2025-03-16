@@ -252,6 +252,61 @@ Belirli rotalar veya IP adresleri için muafiyetleri yapılandırma dosyasında 
 
 `examples` dizininde örnek bir sunucu uygulaması bulunmaktadır. Kendi lisans sunucunuzu oluşturmak için bunu başlangıç noktası olarak kullanabilirsiniz.
 
+## Lisans Özellikleri (Features) Alanı
+
+Lisans sisteminde `features` alanı, **tamamen opsiyonel** bir özelliktir ve JSON formatında veri saklayarak lisansların özelliklerini dinamik olarak yönetmenize olanak tanır. Bu alan, uygulamalarınızın lisans bazlı özellik yönetimini kolaylaştırır.
+
+### Kullanım Alanları
+
+-   **Farklı lisans paketleri oluşturma**: Temel, premium, kurumsal gibi farklı seviyeler tanımlayabilirsiniz
+-   **Modül erişimi kontrolü**: Hangi lisansın hangi modüllere erişebileceğini belirleyebilirsiniz
+-   **Kullanım sınırları belirleme**: Kullanıcı sayısı, depolama alanı, işlem limitleri gibi sınırlar tanımlayabilirsiniz
+-   **Özel müşteri yapılandırmaları**: Her müşteriye özel ayarlar tanımlayabilirsiniz
+
+### Örnek JSON Formatı
+
+```json
+{
+  "premium_access": true,
+  "max_users": 50,
+  "modules": ["reporting", "analytics", "export"],
+  "storage_limit": "10GB",
+  "api_rate_limit": 1000,
+  "custom_settings": {
+    "theme": "dark",
+    "notification_channels": ["email", "sms"],
+    "data_retention_days": 90
+  }
+}
+```
+
+### Özellik Tanımları ve Kullanım Örnekleri
+
+| Özellik | Açıklama | Kullanım Örneği |
+|----------|------------|---------------|
+| `premium_access` | Premium özelliklere erişim izni | `if ($license->hasFeature('premium_access')) { // Premium özellikleri göster }` |
+| `max_users` | Sisteme eklenebilecek maksimum kullanıcı sayısı | `if (count($users) < $license->hasFeature('max_users', 10)) { // Yeni kullanıcı ekle }` |
+| `modules` | Erişim izni olan modüllerin listesi | `if ($license->hasModuleAccess('reporting')) { // Raporlama modülünü göster }` |
+| `storage_limit` | Depolama alanı limiti | `if ($fileSize + $currentUsage < parseSize($license->hasFeature('storage_limit', '1GB'))) { // Dosyayı yükle }` |
+| `api_rate_limit` | API istek limiti | `if ($requestCount < $license->hasFeature('api_rate_limit', 100)) { // API isteğini işle }` |
+
+### Kullanım
+
+```php
+// Tüm özellikleri al
+$features = License::getLicenseFeatures();
+
+// Belirli bir özelliği kontrol et
+$maxUsers = License::hasFeature('max_users', 10); // Varsayılan değer: 10
+
+// Modül erişimini kontrol et
+if (License::hasModuleAccess('reporting')) {
+    // Raporlama modülüne erişim var
+} else {
+    // Raporlama modülüne erişim yok
+}
+```
+
 ## Güvenlik
 
 Bu paket şu güvenlik özelliklerini içerir:

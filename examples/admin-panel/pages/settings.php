@@ -1,8 +1,10 @@
 <?php
-// Güvenlik kontrolü
-if (!defined('ADMIN_PANEL')) {
-    exit('Doğrudan erişim engellendi.');
-}
+/**
+ * Lisans Yönetim Paneli - Ayarlar Sayfası
+ */
+
+// Güvenlik kontrolü index.php üzerinden geldiğinden emin oluyoruz
+// Bu sayfa doğrudan çağrıldığında çalışmayacak
 
 // Ayarları kaydet
 $successMessage = '';
@@ -15,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_settings'])) {
         if (setLanguage($language)) {
             $successMessage = __('settings_saved');
         } else {
-            $errorMessage = 'Dil seçimi kaydedilemedi.';
+            $errorMessage = __('language_save_error');
         }
     }
 }

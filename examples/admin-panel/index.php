@@ -7,23 +7,32 @@
  * Güvenli giriş, lisans oluşturma, lisans kontrol ve geçersiz lisans isteklerini görüntüleme
  * özelliklerine sahip bir panel sunar.
  */
-
 session_start();
 require_once 'config.php';
 require_once 'functions.php';
 require_once 'auth.php';
-// Lisans bildirimleri özelliği kaldırıldı
+require_once 'language.php';
+// Dil değişimi kontrolü
+if (isset($_GET['lang'])) {
+    $language = $_GET['lang'];
+    if (setLanguage($language)) {
+        // Dil değiştirildi, aynı sayfaya yönlendir
+        $redirectUrl = 'index.php?page=' . (isset($_GET['page']) ? $_GET['page'] : 'dashboard');
+        header('Location: ' . $redirectUrl);
+        exit;
+    }
+}
+
+// Dil dosyasını yükle
+loadLanguage();
 
 // Oturum kontrolü
 $auth = new Auth();
 $loggedIn = $auth->isLoggedIn();
 
-// Lisans bildirimleri özelliği kaldırıldı
-$licenseNotifications = null;
-
 // Sayfa yönlendirme
 $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
-$allowedPages = ['dashboard', 'licenses', 'create-license', 'invalid-requests', 'login', 'logout'];
+$allowedPages = ['dashboard', 'licenses', 'create-license', 'invalid-requests', 'login', 'logout', 'profile', 'settings', 'users', 'rate-limits'];
 
 if (!in_array($page, $allowedPages)) {
     $page = 'dashboard';
@@ -49,27 +58,33 @@ if ($page == 'logout' && $loggedIn) {
 }
 
 // Sayfa başlığı
-$pageTitle = 'Lisans Yönetim Paneli';
+$pageTitle = __('app_name');
 switch ($page) {
     case 'dashboard':
-        $pageTitle = 'Kontrol Paneli - Lisans Yönetim Paneli';
+        $pageTitle = __('dashboard') . ' - ' . __('app_name');
         break;
     case 'licenses':
-        $pageTitle = 'Lisanslar - Lisans Yönetim Paneli';
+        $pageTitle = __('licenses') . ' - ' . __('app_name');
         break;
     case 'create-license':
-        $pageTitle = 'Lisans Oluştur - Lisans Yönetim Paneli';
+        $pageTitle = __('create_license') . ' - ' . __('app_name');
         break;
     case 'invalid-requests':
-        $pageTitle = 'Geçersiz İstekler - Lisans Yönetim Paneli';
+        $pageTitle = __('invalid_requests') . ' - ' . __('app_name');
         break;
     case 'login':
-        $pageTitle = 'Giriş - Lisans Yönetim Paneli';
+        $pageTitle = __('login') . ' - ' . __('app_name');
+        break;
+    case 'profile':
+        $pageTitle = __('profile') . ' - ' . __('app_name');
+        break;
+    case 'users':
+        $pageTitle = __('users') . ' - ' . __('app_name');
         break;
 }
 ?>
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="<?php echo getCurrentLanguage(); ?>">
 
 <head>
     <meta charset="UTF-8">
@@ -88,32 +103,49 @@ switch ($page) {
                 <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
                     <div class="position-sticky pt-3">
                         <div class="px-3 py-4 text-white">
-                            <h4>Lisans Yönetimi</h4>
+                            <h4><?php echo __('app_name'); ?></h4>
                         </div>
                         <ul class="nav flex-column">
                             <li class="nav-item">
                                 <a class="nav-link <?php echo $page == 'dashboard' ? 'active' : ''; ?>" href="index.php?page=dashboard">
-                                    <i class="bi bi-speedometer2 me-2"></i> Kontrol Paneli
+                                    <i class="bi bi-speedometer2 me-2"></i> <?php echo __('dashboard'); ?>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link <?php echo $page == 'licenses' ? 'active' : ''; ?>" href="index.php?page=licenses">
-                                    <i class="bi bi-key me-2"></i> Lisanslar
+                                    <i class="bi bi-key me-2"></i> <?php echo __('licenses'); ?>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link <?php echo $page == 'create-license' ? 'active' : ''; ?>" href="index.php?page=create-license">
-                                    <i class="bi bi-plus-circle me-2"></i> Lisans Oluştur
+                                    <i class="bi bi-plus-circle me-2"></i> <?php echo __('create_license'); ?>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link <?php echo $page == 'invalid-requests' ? 'active' : ''; ?>" href="index.php?page=invalid-requests">
-                                    <i class="bi bi-exclamation-triangle me-2"></i> Geçersiz İstekler
+                                    <i class="bi bi-exclamation-triangle me-2"></i> <?php echo __('invalid_requests'); ?>
                                 </a>
                             </li>
-                            <li class="nav-item mt-5">
+                            <li class="nav-item">
+                                <a class="nav-link <?php echo $page == 'profile' ? 'active' : ''; ?>" href="index.php?page=profile">
+                                    <i class="bi bi-person me-2"></i> <?php echo __('profile'); ?>
+                                </a>
+                            </li>
+                            <li class="nav-item mt-3">
+                                <div class="dropdown px-3 py-2">
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-translate me-1"></i> <?php echo getAvailableLanguages()[getCurrentLanguage()]; ?>
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+                                        <?php foreach (getAvailableLanguages() as $code => $name): ?>
+                                            <li><a class="dropdown-item <?php echo getCurrentLanguage() == $code ? 'active' : ''; ?>" href="index.php?page=<?php echo $page; ?>&lang=<?php echo $code; ?>"><?php echo $name; ?></a></li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="nav-item mt-3">
                                 <a class="nav-link" href="index.php?page=logout">
-                                    <i class="bi bi-box-arrow-right me-2"></i> Çıkış Yap
+                                    <i class="bi bi-box-arrow-right me-2"></i> <?php echo __('logout'); ?>
                                 </a>
                             </li>
                         </ul>

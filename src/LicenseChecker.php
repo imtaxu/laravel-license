@@ -694,6 +694,125 @@ class LicenseChecker
     }
     
     /**
+     * Lisans özelliklerini (features) alır
+     * 
+     * Bu metot, lisansın JSON formatında saklanmış özelliklerini (features) döndürür.
+     * Özellikler alanı tamamen opsiyoneldir ve lisansın özel yeteneklerini tanımlamak için kullanılır.
+     * 
+     * Örnek özellikler:
+     * - premium_access: Premium özelliklere erişim izni (boolean)
+     * - max_users: Sisteme eklenebilecek maksimum kullanıcı sayısı (integer)
+     * - modules: Erişim izni olan modüllerin listesi (array)
+     * - storage_limit: Depolama alanı limiti (string)
+     * - api_rate_limit: API istek limiti (integer)
+     * 
+     * @return array|null JSON formatındaki lisans özellikleri veya null (özellikler tanımlanmamışsa)
+     */
+    public function getLicenseFeatures(): ?array
+    {
+        // Lisans verilerini önbellekten al
+        $licenseData = $this->cacheService->getLicenseData($this->config['license_key']);
+        
+        // Lisans verileri yoksa veya geçersizse null döndür
+        if (!$licenseData || !isset($licenseData['data']) || !isset($licenseData['data']['features'])) {
+            return null;
+        }
+        
+        // JSON formatındaki features alanını diziye dönüştür
+        $features = $licenseData['data']['features'];
+        if (is_string($features)) {
+            $features = json_decode($features, true);
+        }
+        
+        return $features;
+    }
+    
+    /**
+     * Belirli bir lisans özelliğinin değerini kontrol eder
+     * 
+     * Bu metot, belirli bir lisans özelliğinin değerini döndürür. Eğer özellik bulunamazsa
+     * veya lisansın features alanı tanımlanmamışsa, varsayılan değer döndürülür.
+     * 
+     * Kullanım örnekleri:
+     * 1. Kullanıcı sayısı kontrolü:
+     *    `if (count($users) < $license->hasFeature('max_users', 10)) { // Yeni kullanıcı ekle }`
+     * 
+     * 2. Depolama alanı kontrolü:
+     *    `if ($fileSize + $currentUsage < parseSize($license->hasFeature('storage_limit', '1GB'))) { // Dosyayı yükle }`
+     * 
+     * 3. Premium erişim kontrolü:
+     *    `if ($license->hasFeature('premium_access')) { // Premium özellikleri göster }`
+     * 
+     * @param string $featureName Özellik adı (max_users, storage_limit, premium_access vb.)
+     * @param mixed $defaultValue Özellik bulunamazsa döndürülecek varsayılan değer
+     * @return mixed Özellik değeri veya varsayılan değer
+     */
+    public function hasFeature(string $featureName, $defaultValue = false)
+    {
+        $features = $this->getLicenseFeatures();
+        
+        if ($features === null) {
+            return $defaultValue;
+        }
+        
+        return $features[$featureName] ?? $defaultValue;
+    }
+    
+    /**
+     * Lisansın belirli bir modüle erişimi olup olmadığını kontrol eder
+     * 
+     * Bu metot, lisansın belirli bir modüle erişimi olup olmadığını kontrol eder.
+     * Modül erişimi iki şekilde tanımlanabilir:
+     * 
+     * 1. `modules` dizisi içinde modül adının bulunması:
+     *    ```json
+     *    {
+     *      "modules": ["reporting", "analytics", "export"]
+     *    }
+     *    ```
+     * 
+     * 2. Modül adının doğrudan bir özellik olarak tanımlanması ve değerinin true olması:
+     *    ```json
+     *    {
+     *      "reporting": true,
+     *      "analytics": false
+     *    }
+     *    ```
+     * 
+     * Kullanım örneği:
+     * ```php
+     * if ($license->hasModuleAccess('reporting')) {
+     *     // Raporlama modülünü göster
+     * } else {
+     *     // Erişim yok mesajı göster
+     * }
+     * ```
+     * 
+     * @param string $moduleName Modül adı (reporting, analytics, export vb.)
+     * @return bool Erişim izni var mı?
+     */
+    public function hasModuleAccess(string $moduleName): bool
+    {
+        $features = $this->getLicenseFeatures();
+        
+        if ($features === null) {
+            return false;
+        }
+        
+        // Modüller dizisi varsa kontrol et
+        if (isset($features['modules']) && is_array($features['modules'])) {
+            return in_array($moduleName, $features['modules']);
+        }
+        
+        // Modül adında bir özellik varsa ve true ise erişim ver
+        if (isset($features[$moduleName]) && $features[$moduleName] === true) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
      * Checks how many days are left until the license expires and returns notification information if a notification should be displayed
      * 
      * @return array|null Notification information or null (if no notification should be displayed)

@@ -3,6 +3,9 @@
  * Lisans Yönetim Paneli - Kontrol Paneli Sayfası
  */
 
+// Dil dosyasını yükle
+require_once 'language.php';
+
 // Veritabanı bağlantısı
 $db = getDbConnection();
 
@@ -34,7 +37,7 @@ try {
     
 } catch (PDOException $e) {
     error_log("Dashboard istatistik hatası: " . $e->getMessage());
-    $error = "Veritabanı istatistikleri alınırken bir hata oluştu.";
+    $error = __('dashboard_stats_error');
 }
 ?>
 
@@ -48,7 +51,7 @@ try {
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Toplam Lisans</div>
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1"><?php echo __('total_licenses'); ?></div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo isset($totalLicenses) ? $totalLicenses : 0; ?></div>
                     </div>
                     <div class="col-auto">
@@ -64,7 +67,7 @@ try {
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Aktif Lisans</div>
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1"><?php echo __('active_licenses'); ?></div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo isset($activeLicenses) ? $activeLicenses : 0; ?></div>
                     </div>
                     <div class="col-auto">
@@ -80,7 +83,7 @@ try {
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Yakında Sona Erecek</div>
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1"><?php echo __('expired_licenses'); ?></div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo isset($expiringLicenses) ? $expiringLicenses : 0; ?></div>
                     </div>
                     <div class="col-auto">
@@ -96,7 +99,7 @@ try {
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Geçersiz İstekler (7 Gün)</div>
+                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1"><?php echo __('invalid_requests_count'); ?> (7 Gün)</div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo isset($invalidRequests) ? $invalidRequests : 0; ?></div>
                     </div>
                     <div class="col-auto">
@@ -114,8 +117,8 @@ try {
     <div class="col-lg-6 mb-4">
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Son Eklenen Lisanslar</h6>
-                <a href="index.php?page=licenses" class="btn btn-sm btn-primary">Tümünü Gör</a>
+                <h6 class="m-0 font-weight-bold text-primary"><?php echo __('recent_licenses'); ?></h6>
+                <a href="index.php?page=licenses" class="btn btn-sm btn-primary"><?php echo __('view_all'); ?></a>
             </div>
             <div class="card-body">
                 <?php if (isset($recentLicenses) && count($recentLicenses) > 0): ?>
@@ -123,10 +126,10 @@ try {
                         <table class="table table-bordered table-hover">
                             <thead>
                                 <tr>
-                                    <th>Lisans Anahtarı</th>
-                                    <th>Domain</th>
-                                    <th>Durum</th>
-                                    <th>Bitiş Tarihi</th>
+                                    <th><?php echo __('license_key'); ?></th>
+                                    <th><?php echo __('domain'); ?></th>
+                                    <th><?php echo __('status'); ?></th>
+                                    <th><?php echo __('expiry_date'); ?></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -147,8 +150,8 @@ try {
                     </div>
                 <?php else: ?>
                     <div class="text-center py-3">
-                        <p class="text-muted">Henüz lisans bulunmuyor.</p>
-                        <a href="index.php?page=create-license" class="btn btn-primary">Lisans Oluştur</a>
+                        <p class="text-muted"><?php echo __('no_licenses_found'); ?></p>
+                        <a href="index.php?page=create-license" class="btn btn-primary"><?php echo __('create_license'); ?></a>
                     </div>
                 <?php endif; ?>
             </div>
@@ -159,8 +162,8 @@ try {
     <div class="col-lg-6 mb-4">
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Son Geçersiz İstekler</h6>
-                <a href="index.php?page=invalid-requests" class="btn btn-sm btn-primary">Tümünü Gör</a>
+                <h6 class="m-0 font-weight-bold text-primary"><?php echo __('recent_invalid_requests'); ?></h6>
+                <a href="index.php?page=invalid-requests" class="btn btn-sm btn-primary"><?php echo __('view_all'); ?></a>
             </div>
             <div class="card-body">
                 <?php if (isset($recentInvalidRequests) && count($recentInvalidRequests) > 0): ?>
@@ -168,10 +171,10 @@ try {
                         <table class="table table-bordered table-hover">
                             <thead>
                                 <tr>
-                                    <th>Lisans Anahtarı</th>
-                                    <th>IP Adresi</th>
-                                    <th>Neden</th>
-                                    <th>Tarih</th>
+                                    <th><?php echo __('license_key'); ?></th>
+                                    <th><?php echo __('ip_address'); ?></th>
+                                    <th><?php echo __('reason'); ?></th>
+                                    <th><?php echo __('request_date'); ?></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -188,7 +191,7 @@ try {
                     </div>
                 <?php else: ?>
                     <div class="text-center py-3">
-                        <p class="text-muted">Henüz geçersiz istek bulunmuyor.</p>
+                        <p class="text-muted"><?php echo __('no_invalid_requests'); ?></p>
                     </div>
                 <?php endif; ?>
             </div>

@@ -1,13 +1,14 @@
 <?php
+
 /**
  * Lisans Yönetim Paneli Yapılandırma Dosyası
  */
 
 // Veritabanı bağlantı bilgileri
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'license_manager');
+define('DB_NAME', 'adcms_license_manager');
 define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_PASS', 'root'); // Veritabanı şifrenizi buraya girin
 
 // Uygulama ayarları
 define('APP_NAME', 'Lisans Yönetim Paneli');
@@ -23,7 +24,8 @@ define('DEFAULT_LICENSE_DURATION', 365); // Gün cinsinden
 define('MAX_INVALID_ATTEMPTS', 5); // Maksimum geçersiz lisans kontrolü denemesi
 
 // Veritabanı bağlantısı
-function getDbConnection() {
+function getDbConnection()
+{
     try {
         $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
         $options = [
@@ -31,7 +33,7 @@ function getDbConnection() {
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES => false,
         ];
-        
+
         return new PDO($dsn, DB_USER, DB_PASS, $options);
     } catch (PDOException $e) {
         die("Veritabanı bağlantı hatası: " . $e->getMessage());
