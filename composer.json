@@ -1,60 +1,60 @@
 {
-    "name": "imtaxu/laravel-license",
-    "description": "License manager package for Laravel applications",
-    "type": "library",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Turgay Aksu",
-            "email": "turgay@aksu.net"
-        }
-    ],
-    "keywords": [
-        "laravel",
-        "license",
-        "license manager",
-        "license validation",
-        "license activation"
-    ],
-    "homepage": "https://github.com/imtaxu/laravel-license",
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "require": {
-        "php": "^8.2",
-        "illuminate/support": "^10.0|^11.0|^12.0",
-        "illuminate/console": "^10.0|^11.0|^12.0",
-        "illuminate/http": "^10.0|^11.0|^12.0",
-        "illuminate/database": "^10.0|^11.0|^12.0",
-        "nikic/php-parser": "^5.0"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^10.0",
-        "orchestra/testbench": "^8.0"
-    },
-    "autoload": {
-        "psr-4": {
-            "Imtaxu\\LaravelLicense\\": "src/src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Imtaxu\\LaravelLicense\\Tests\\": "tests/"
-        }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Imtaxu\\LaravelLicense\\LicenseServiceProvider"
-            ],
-            "aliases": {
-                "License": "Imtaxu\\LaravelLicense\\Facades\\License"
-            }
-        }
-    },
-    "scripts": {
-        "test": "vendor/bin/phpunit"
-    },
-    "config": {
-        "sort-packages": true
-    }
+	"name": "imtaxu/laravel-license",
+	"description": "License manager package for Laravel applications",
+	"type": "library",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Turgay Aksu",
+			"email": "turgay@aksu.net"
+		}
+	],
+	"keywords": [
+		"laravel",
+		"license",
+		"license manager",
+		"license validation",
+		"license activation"
+	],
+	"homepage": "https://github.com/imtaxu/laravel-license",
+	"minimum-stability": "dev",
+	"prefer-stable": true,
+	"require": {
+		"php": "^8.2",
+		"illuminate/support": "^10.0|^11.0|^12.0",
+		"illuminate/console": "^10.0|^11.0|^12.0",
+		"illuminate/http": "^10.0|^11.0|^12.0",
+		"illuminate/database": "^10.0|^11.0|^12.0",
+		"nikic/php-parser": "^5.0"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "^10.0",
+		"orchestra/testbench": "^8.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"Imtaxu\\LaravelLicense\\": "src/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Imtaxu\\LaravelLicense\\Tests\\": "tests/"
+		}
+	},
+	"extra": {
+		"laravel": {
+			"providers": [
+				"Imtaxu\\LaravelLicense\\LicenseServiceProvider"
+			],
+			"aliases": {
+				"License": "Imtaxu\\LaravelLicense\\Facades\\License"
+			}
+		}
+	},
+	"scripts": {
+		"test": "vendor/bin/phpunit"
+	},
+	"config": {
+		"sort-packages": true
+	}
 }
