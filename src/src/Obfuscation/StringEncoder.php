@@ -17,27 +17,27 @@ class StringEncoder extends NodeVisitorAbstract
     public function enterNode(Node $node)
     {
         try {
-            // Sadece string literal'ları işle
+            // Process only string literals
             if ($node instanceof Node\Scalar\String_) {
-                // Çok uzun string'leri atla
+                // Skip very long strings
                 if (strlen($node->value) > 1000) {
                     return null;
                 }
 
-                // Boş string'leri atla
+                // Skip empty strings
                 if (empty($node->value)) {
                     return null;
                 }
 
-                // String'i hex formatına dönüştür
+                // Convert string to hex format
                 $encoded = $this->stringToHex($node->value);
 
-                // String'i direk olarak hex-encoded string ile değiştir
+                // Replace string with hex-encoded string
                 $node->value = $encoded;
                 return $node;
             }
         } catch (\Exception $e) {
-            // Hata durumunda orijinal nod'u değiştirmeden döndür
+            // Return original node in case of error
             return null;
         }
 
